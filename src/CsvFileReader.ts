@@ -1,12 +1,10 @@
 import fs from "fs";
-import { stringToDate } from "./utils";
-import { MatchResult } from "./MatchResult";
 
-type MatchData = [Date, string, string, number, number, MatchResult, string];
+export abstract class FileReader<T> {
+ data: T[] = [];
 
-export class FileReader {
- data: MatchData[] = [];
  constructor(public filename: string) {}
+ abstract mapRow(row: string[]): T;
 
  read(): void {
   this.data = fs
@@ -16,17 +14,5 @@ export class FileReader {
    .split("\n")
    .map((row: string): string[] => row.split(","))
    .map(this.mapRow);
- }
-
- mapRow(row: string[]): MatchData {
-  return [
-   stringToDate(row[0]),
-   row[1],
-   row[2],
-   parseInt(row[3]),
-   parseInt(row[4]),
-   row[5] as MatchResult,
-   row[6],
-  ];
  }
 }
